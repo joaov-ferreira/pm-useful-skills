@@ -34,15 +34,15 @@ Capture, theming, mockups and review are written as subagent briefs, so agents t
 **Claude Code (plugin):**
 
 ```bash
-/plugin marketplace add joaov-ferreira/ux-audit-skill
-/plugin install ux-audit@ux-audit-skill
+/plugin marketplace add joaov-ferreira/pm-useful-skills
+/plugin install ux-audit@pm-useful-skills
 ```
 
 **Claude Code (plain skill)**: copy the skill folder into your skills directory:
 
 ```bash
-git clone https://github.com/joaov-ferreira/ux-audit-skill.git
-cp -r ux-audit-skill/skills/ux-audit ~/.claude/skills/
+git clone https://github.com/joaov-ferreira/pm-useful-skills.git
+cp -r pm-useful-skills/ux-audit-skill/skills/ux-audit ~/.claude/skills/
 ```
 
 **Other agents**: point your agent at `skills/ux-audit/SKILL.md`; everything else is reached from there by relative links.
@@ -120,4 +120,4 @@ The audit is read-only. The agent browses as an anonymous visitor, declines non-
 
 ## License
 
-MIT
+MIT, see the [LICENSE](../LICENSE) at the repository root.
