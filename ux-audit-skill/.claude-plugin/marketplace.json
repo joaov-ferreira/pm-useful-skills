@@ -1,0 +1,11 @@
+{
+  "name": "ux-audit-skill",
+  "owner": { "name": "joaov-ferreira" },
+  "plugins": [
+    {
+      "name": "ux-audit",
+      "source": "./",
+      "description": "Evidence-based UX and accessibility audit of any public URL, delivered as a self-contained HTML report."
+    }
+  ]
+}

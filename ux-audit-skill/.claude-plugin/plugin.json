@@ -1,0 +1,8 @@
+{
+  "name": "ux-audit",
+  "version": "1.0.0",
+  "description": "Evidence-based UX and accessibility audit of any public URL, delivered as a self-contained HTML report in the product's own design system: WCAG 2.2, Apple HIG, Shopify Polaris, GOV.UK, Krug, Nielsen, Norman, Wroblewski and Fitts.",
+  "author": { "name": "joaov-ferreira" },
+  "license": "MIT",
+  "keywords": ["ux", "usability", "accessibility", "wcag", "audit", "heuristic-evaluation", "skill"]
+}

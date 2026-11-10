@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{REPORT_TITLE}}</title>
+<meta name="description" content="{{ONE_SENTENCE_DESCRIPTION}}">
+<!-- FONTS: the theming step may add one <link> to the target's web fonts here (Google Fonts or the site's own font CSS). -->
+<style>
+/* =====================================================================
+   THEME:START
+   The ONLY block the theming step edits. Everything below THEME:END reads
+   these tokens, so re-skinning the report (and every mockup) to a design
+   system means changing values here and nothing else.
+   ===================================================================== */
+:root {
+  /* Report surfaces & text */
+  --bg: #f6f7f9;            /* page background */
+  --surface: #ffffff;       /* cards, tables */
+  --surface-2: #eef0f3;     /* table headers, code, insets */
+  --ink: #16191d;           /* main text */
+  --ink-2: #4e5661;         /* secondary text (≥ 4.5:1 on --surface) */
+  --line: #dde1e6;          /* hairlines and borders */
+  --brand: #1f3a5f;         /* site's primary brand colour: headings accents, score, buttons */
+  --on-brand: #ffffff;      /* text on --brand */
+  --accent: #c2410c;        /* site's action/link colour (≥ 4.5:1 on --surface) */
+  --header-bg: #1f3a5f;     /* cover background */
+  --header-ink: #ffffff;    /* cover text */
+
+  /* Type */
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-head: var(--font-body);
+  --head-weight: 700;
+  --head-transform: none;
+  --head-tracking: -0.01em;
+  --head-style: normal;     /* italic when the product's headings are italic */
+
+  /* Shape & depth */
+  --radius: 14px;           /* cards */
+  --radius-sm: 8px;         /* chips, inputs, small elements */
+  --btn-radius: 8px;        /* site's button radius */
+  --btn-transform: none;    /* site's button text-transform */
+  --btn-tracking: normal;   /* site's button letter-spacing */
+  --shadow: 0 1px 2px rgba(16,24,40,.06), 0 6px 20px rgba(16,24,40,.07);
+
+  /* Severity & status (keep hues recognisable: red, orange, amber, green; tune only for contrast) */
+  --crit: #b42318; --crit-bg: #fee4e2;
+  --high: #b54708; --high-bg: #fef0c7;
+  --med:  #8a6100; --med-bg:  #fdf6d8;
+  --low:  #067647; --low-bg:  #dcfae6;
+  --pass: #067647; --fail: #b42318; --part: #8a6100;
+  --mark: #d92d20;          /* annotation markers on screenshots */
+
+  /* Mockup screens: the TARGET PRODUCT's own UI colours. They are not redefined in
+     dark mode, because a mockup depicts the product as users see it. */
+  --site-bg: #ffffff;
+  --site-ink: #16191d;
+  --site-ink-2: #5b6470;
+  --site-line: rgba(0,0,0,.1);
+  --site-line-strong: rgba(0,0,0,.35);
+  --site-primary: #1f3a5f;     /* the product's primary button */
+  --site-on-primary: #ffffff;
+  --site-header-bg: #ffffff;
+  --site-header-ink: #16191d;
+  --site-placeholder: #d9dde3; /* image placeholders in mockups */
+  --site-accent: #c2410c;      /* the product's secondary/action colour (links, badges, selected states) */
+  --site-surface: #f3f4f6;     /* the product's tinted panels (banners, notices, selected cards) */
+  --site-error: #b42318;       /* the product's error colour (field errors, error summary) */
+  --site-radius: 8px;          /* the product's card/input radius */
+
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1216; --surface: #171b21; --surface-2: #1f252d; --ink: #e7eaee; --ink-2: #a9b2bd; --line: #2c333d;
+    --brand: #9cc0ea; --on-brand: #0f1216; --accent: #f59e6b; --header-bg: #14253a; --header-ink: #e7eaee;
+    --crit: #ff8a80; --crit-bg: #3b1714; --high: #ffb870; --high-bg: #3a2610; --med: #e8d36a; --med-bg: #322d0f;
+    --low: #8fd19e; --low-bg: #142a1a; --pass: #8fd19e; --fail: #ff8a80; --part: #f2c66d;
+    --shadow: 0 1px 2px rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1216; --surface: #171b21; --surface-2: #1f252d; --ink: #e7eaee; --ink-2: #a9b2bd; --line: #2c333d;
+  --brand: #9cc0ea; --on-brand: #0f1216; --accent: #f59e6b; --header-bg: #14253a; --header-ink: #e7eaee;
+  --crit: #ff8a80; --crit-bg: #3b1714; --high: #ffb870; --high-bg: #3a2610; --med: #e8d36a; --med-bg: #322d0f;
+  --low: #8fd19e; --low-bg: #142a1a; --pass: #8fd19e; --fail: #ff8a80; --part: #f2c66d;
+  --shadow: 0 1px 2px rgba(0,0,0,.45);
+  color-scheme: dark;
+}
+/* =========================== THEME:END =============================== */
+
+/* ---------- base ---------- */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 var(--font-body); }
+h1, h2, h3 { font-family: var(--font-head); font-weight: var(--head-weight); font-style: var(--head-style); text-transform: var(--head-transform); letter-spacing: var(--head-tracking); }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+code { font: .86em/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--surface-2); padding: .1em .35em; border-radius: 4px; overflow-wrap: anywhere; }
+img { max-width: 100%; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: 16px; top: 16px; background: var(--surface); padding: 8px 12px; z-index: 10; }
+.muted { color: var(--ink-2); }
+.small { font-size: 14px; }
+p { margin: 0 0 12px; }
+
+/* ---------- cover ---------- */
+header.top { background: var(--header-bg); color: var(--header-ink); padding: 24px 0 40px; overflow: hidden; }
+header.top code { background: rgba(255,255,255,.16); color: inherit; }
+header.top .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
+header.top .brandline { display: flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; opacity: .9; margin: 0; }
+header.top .brandline img { height: 22px; width: auto; }
+.cover-grid { display: grid; gap: 28px; align-items: center; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .cover-grid { grid-template-columns: 1.15fr 1fr; } }
+header.top h1 { font-size: clamp(30px, 6vw, 48px); line-height: 1.1; margin: 0 0 14px; }
+header.top .lede { font-size: 18px; max-width: 640px; margin: 0 0 20px; opacity: .95; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.meta li { font-size: 14px; border: 1px solid currentColor; border-radius: 999px; padding: 4px 12px; opacity: .9; }
+.cover-phones { position: relative; height: 330px; max-width: 460px; width: 100%; margin: 0 auto; }
+.cover-phones .mini { position: absolute; top: 20px; width: 150px; padding: 6px; border-radius: 26px; background: #0b0f14; box-shadow: 0 18px 40px rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.12); }
+.cover-phones .mini img { display: block; width: 138px; height: 235px; object-fit: cover; object-position: top; border-radius: 20px; background: #222; }
+.cover-phones .mini:nth-child(1) { left: 2%; transform: rotate(-8deg); top: 40px; }
+.cover-phones .mini:nth-child(2) { left: 50%; margin-left: -75px; z-index: 2; top: 6px; }
+.cover-phones .mini:nth-child(3) { right: 2%; transform: rotate(8deg); top: 40px; }
+@media (max-width: 420px) { .cover-phones { height: 270px; } .cover-phones .mini { width: 122px; } .cover-phones .mini img { width: 110px; height: 188px; } .cover-phones .mini:nth-child(2) { margin-left: -61px; } }
+.theme-toggle { min-height: 44px; padding: 8px 14px; border-radius: 999px; border: 1px solid currentColor; background: transparent; color: inherit; font: inherit; font-size: 14px; cursor: pointer; }
+.theme-toggle:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
+
+/* ---------- nav ---------- */
+nav.toc { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+nav.toc ul { display: flex; gap: 4px; overflow-x: auto; list-style: none; margin: 0; padding: 8px 0; scrollbar-width: thin; }
+nav.toc a { display: inline-block; white-space: nowrap; padding: 10px 12px; min-height: 44px; color: var(--ink); text-decoration: none; font-size: 15px; border-radius: var(--radius-sm); }
+nav.toc a:hover { background: var(--surface-2); }
+
+/* ---------- layout ---------- */
+main section { padding: 44px 0 8px; }
+h2 { font-size: clamp(24px, 4.5vw, 32px); line-height: 1.2; margin: 0 0 16px; }
+h3 { font-size: 20px; line-height: 1.3; margin: 0 0 8px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+.card + .card { margin-top: 20px; }
+.grid-2 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
+.callout { border-left: 4px solid var(--accent); background: var(--surface-2); padding: 12px 16px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin: 12px 0; font-size: 15px; }
+ul.plain { padding-left: 20px; margin: 0; }
+ul.plain li { margin-bottom: 6px; }
+
+/* ---------- summary ---------- */
+.stats { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin: 0 0 20px; padding: 0; list-style: none; }
+.stats li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; box-shadow: var(--shadow); }
+.stats b { display: block; font: var(--head-weight) 30px/1.1 var(--font-head); color: var(--accent); }
+.stats span { display: block; font-size: 14px; color: var(--ink-2); margin-top: 4px; }
+.verdict { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .verdict { grid-template-columns: 1.3fr 1fr; } }
+.big-score { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin: 0 0 4px; }
+.big-score strong { font: var(--head-weight) 56px/1 var(--font-head); color: var(--brand); }
+.big-score span { font-size: 18px; color: var(--ink-2); }
+.score-list { list-style: none; margin: 0; padding: 0; }
+.score-list li { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.score-list li:last-child { border-bottom: 0; }
+.score-list .val { font-variant-numeric: tabular-nums; font-weight: 700; }
+.score-list .track { grid-column: 1 / -1; height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+.score-list .fill { display: block; height: 100%; background: var(--brand); border-radius: 99px; }
+.score-list .note { grid-column: 1 / -1; font-size: 13px; color: var(--ink-2); }
+.badge { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+.b-crit { color: var(--crit); background: var(--crit-bg); } .b-high { color: var(--high); background: var(--high-bg); }
+.b-med { color: var(--med); background: var(--med-bg); } .b-low { color: var(--low); background: var(--low-bg); }
+.tag { display: inline-block; font-size: 12px; color: var(--ink-2); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; margin: 0 4px 4px 0; }
+ol.priorities { margin: 0; padding: 0; list-style: none; counter-reset: p; }
+ol.priorities li { counter-increment: p; display: grid; grid-template-columns: 36px 1fr; gap: 4px 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+ol.priorities li:last-child { border-bottom: 0; }
+ol.priorities li::before { content: counter(p); grid-row: span 2; width: 32px; height: 32px; border-radius: 50%; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; font-weight: 700; font-size: 15px; }
+ol.priorities .what { font-weight: 600; }
+ol.priorities .why { font-size: 14px; color: var(--ink-2); }
+
+/* ---------- tables ---------- */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); margin-bottom: 20px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--surface-2); font-weight: 600; }
+thead th { white-space: nowrap; }
+tr:last-child td, tr:last-child th { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.st-pass { color: var(--pass); font-weight: 700; } .st-fail { color: var(--fail); font-weight: 700; } .st-part { color: var(--part); font-weight: 700; } .st-na { color: var(--ink-2); }
+.pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.pass { color: var(--pass); background: var(--low-bg); } .pill.fail { color: var(--fail); background: var(--crit-bg); }
+.pill.part { color: var(--part); background: var(--med-bg); } .pill.na { color: var(--ink-2); background: var(--surface-2); }
+.pillar-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin: 28px 0 10px; }
+.pillar-h h3 { margin: 0; }
+
+/* ---------- journey ---------- */
+ol.journey { list-style: none; margin: 0; padding: 0; }
+ol.journey li { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 0 0 18px 46px; }
+ol.journey li::before { content: ""; position: absolute; left: 15px; top: 32px; bottom: 0; width: 2px; background: var(--line); }
+ol.journey li:last-child::before { display: none; }
+ol.journey .dot { position: absolute; left: 0; top: 0; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 14px; background: var(--surface); border: 2px solid var(--brand); color: var(--brand); }
+ol.journey .dot.pain { border-color: var(--crit); color: var(--crit); background: var(--crit-bg); }
+ol.journey .step { font-weight: 600; display: block; }
+ol.journey .detail { font-size: 14px; color: var(--ink-2); }
+ol.journey .jt { width: 64px; height: 109px; object-fit: cover; object-position: top; border-radius: var(--radius-sm); border: 1px solid var(--line); }
+
+/* distance-to-task chart */
+.dist { display: grid; gap: 18px; }
+.dist-row .name { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+.dist-row .name small { font-weight: 400; color: var(--ink-2); }
+.dist-track { position: relative; height: 22px; background: var(--surface-2); border-radius: 6px; }
+.dist-len { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--brand) 22%, transparent); border-radius: 6px; }
+.dist-fold { position: absolute; inset: 0 auto 0 0; background: var(--low-bg); border-right: 2px dashed var(--pass); border-radius: 6px 0 0 6px; }
+.dist-mark { position: absolute; top: -4px; width: 4px; height: 30px; background: var(--accent); border-radius: 2px; transform: translateX(-2px); }
+.dist-mark.m2 { background: var(--brand); }
+.dist-note { font-size: 13px; color: var(--ink-2); margin: 8px 0 0; }
+.dist-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--ink-2); margin-top: 8px; }
+.dist-legend i { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; margin-right: 6px; border-radius: 3px; }
+
+/* ---------- findings ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+.filters button { min-height: 44px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; font-size: 15px; cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+article.finding { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; margin: 0 0 24px; scroll-margin-top: 72px; }
+article.finding[hidden] { display: none; }
+.f-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 10px; }
+.f-id { font: 600 13px/1 ui-monospace, Menlo, Consolas, monospace; color: var(--ink-2); }
+article.finding h3 { flex-basis: 100%; margin: 4px 0 0; font-size: 21px; }
+.f-body { display: grid; gap: 8px 32px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 980px) { .f-body { grid-template-columns: minmax(0, 1fr) 300px; } }
+.f-text h4 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); margin: 16px 0 4px; }
+.f-text h4:first-child { margin-top: 0; }
+.f-text ul { margin: 0 0 8px; padding-left: 20px; }
+.f-text li { margin-bottom: 4px; }
+.impact { background: var(--surface-2); border-radius: var(--radius-sm); padding: 14px 16px; align-self: start; font-size: 14px; }
+.impact h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); }
+.impact dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; }
+.impact dt { color: var(--ink-2); }
+.impact dd { margin: 0; font-weight: 600; }
+.impact .arrow { font-weight: 800; color: var(--pass); }
+.impact .measure { margin: 10px 0 0; font-size: 13px; color: var(--ink-2); }
+
+/* galleries: Today (annotated capture) next to Proposed (mockup) */
+.gallery { display: flex; gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 14px 2px 10px; margin-top: 16px; border-top: 1px dashed var(--line); }
+@media (min-width: 900px) { .gallery { flex-wrap: wrap; overflow: visible; } }
+.gallery > figure { flex: 0 0 auto; scroll-snap-align: start; margin: 0; position: relative; padding-top: 30px; }
+figure.phone { width: 286px; }
+figure.wide { flex: 0 0 min(640px, 100%); width: min(640px, 100%); }
+.ftag { position: absolute; top: 0; left: 0; z-index: 2; white-space: nowrap; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+.ftag.today { background: var(--crit-bg); color: var(--crit); }
+.ftag.proposed { background: var(--low-bg); color: var(--low); }
+.device { width: 286px; padding: 8px; border-radius: 36px; background: #0b0f14; box-shadow: 0 10px 30px rgba(16,24,40,.22); }
+figure.wide .device { width: 100%; border-radius: 14px; padding: 22px 6px 6px; position: relative; }
+figure.wide .device::before { content: "● ● ●"; position: absolute; top: 3px; left: 12px; font-size: 10px; letter-spacing: 2px; color: #5b6470; }
+.screen { position: relative; width: 270px; height: 460px; overflow: hidden; border-radius: 28px; background: var(--site-bg, #fff); }
+figure.wide .screen { width: 100%; height: auto; aspect-ratio: 16 / 10; border-radius: 8px; }
+.shot { position: relative; display: block; width: 100%; padding: 0; margin: 0; border: 0; background: none; cursor: zoom-in; border-radius: inherit; overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; }
+.shot:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+/* annotation box: position with % of the screenshot (see references/mockups.md) */
+.mark { position: absolute; border: 3px solid var(--mark); border-radius: 8px; pointer-events: none; box-shadow: 0 0 0 2px rgba(255,255,255,.7); }
+.mark::after { content: attr(data-n); position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; border-radius: 50%; background: var(--mark); color: #fff; font: 700 13px/24px var(--font-body); text-align: center; }
+figcaption { font-size: 14px; color: var(--ink-2); margin-top: 10px; line-height: 1.45; }
+figcaption strong { color: var(--ink); }
+ol.callouts { list-style: none; padding: 0; margin: 8px 0 0; }
+ol.callouts li { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 6px; }
+ol.callouts .n { flex: 0 0 22px; height: 22px; border-radius: 50%; background: var(--mark); color: #fff; font-weight: 700; font-size: 12px; display: grid; place-items: center; margin-top: 1px; }
+ol.callouts .n.ok { background: var(--pass); }
+:root[data-theme="dark"] ol.callouts .n.ok { color: #0f1216; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) ol.callouts .n.ok { color: #0f1216; } }
+.where { font-size: 13px; color: var(--ink-2); }
+
+/* ---------- mockup kit ----------
+   Wireframe primitives drawn with the THEME tokens (and optional --site-* overrides),
+   so proposals look like the target product. Compose freely; add a scoped <style> per
+   mockup when a component needs more. All sizes are in real CSS px of a 270-px-wide phone. */
+.mk { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; font: 13px/1.4 var(--font-body); color: var(--site-ink, #16191d); background: var(--site-bg, #fff); text-align: left; }
+.mk *, .mk *::before { box-sizing: border-box; }
+.mk-scroll { flex: 1; overflow: hidden; }
+.mk-hdr { flex: none; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 14px; background: var(--site-header-bg, var(--site-bg, #fff)); color: var(--site-header-ink, inherit); border-bottom: 1px solid var(--site-line, rgba(0,0,0,.1)); }
+.mk-logo { font: var(--head-weight) 15px/1 var(--font-head); letter-spacing: .02em; }
+.mk-logo img { height: 22px; width: auto; display: block; }
+.mk-icons { display: flex; gap: 6px; }
+.mk-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; font-size: 16px; }
+.mk-h1 { font: var(--head-style) var(--head-weight) 20px/1.2 var(--font-head); text-transform: var(--head-transform); margin: 14px 14px 4px; }
+.mk-h1 small { display: block; font: 400 12px/1.4 var(--font-body); color: var(--site-ink-2, #5b6470); text-transform: none; margin-top: 2px; }
+.mk-sec { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--site-accent, var(--site-ink-2)); margin: 16px 14px 8px; }
+.mk-p { margin: 0 14px 10px; color: var(--site-ink-2, #5b6470); }
+.mk-search { display: flex; align-items: center; gap: 8px; height: 44px; margin: 8px 14px; padding: 0 12px; border: 1.5px solid var(--site-line-strong, rgba(0,0,0,.35)); border-radius: var(--btn-radius); background: var(--site-bg, #fff); color: var(--site-ink-2, #5b6470); font-size: 14px; }
+.mk-chips { display: flex; gap: 6px; overflow: hidden; padding: 0 14px; margin: 8px 0; }
+.mk-chip { flex: none; height: 34px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 999px; border: 1px solid var(--site-line-strong, rgba(0,0,0,.25)); font-size: 12px; font-weight: 600; background: var(--site-bg, #fff); }
+.mk-chip.on { background: var(--site-primary); border-color: var(--site-primary); color: var(--site-on-primary); }
+.mk-btn { display: flex; align-items: center; justify-content: center; height: 46px; margin: 10px 14px; border-radius: var(--btn-radius); font: 700 14px/1 var(--font-body); text-transform: var(--btn-transform); letter-spacing: var(--btn-tracking); background: var(--site-primary, var(--brand)); color: var(--site-on-primary, var(--on-brand)); border: 0; }
+.mk-btn.secondary { background: transparent; color: var(--site-primary, var(--brand)); border: 1.5px solid currentColor; }
+.mk-btn.link { background: none; color: var(--site-ink, inherit); text-decoration: underline; height: 40px; }
+.mk-card { display: grid; grid-template-columns: 64px 1fr auto; gap: 10px; align-items: center; margin: 0 14px 8px; padding: 10px; border: 1px solid var(--site-line, rgba(0,0,0,.1)); border-radius: var(--radius-sm); background: var(--site-bg, #fff); }
+.mk-thumb { width: 64px; height: 64px; border-radius: 6px; background: var(--site-placeholder, #d9dde3) center / cover; }
+.mk-card b { display: block; font-size: 13px; line-height: 1.25; }
+.mk-card small { display: block; font-size: 11px; color: var(--site-ink-2, #5b6470); }
+.mk-price { font-weight: 700; font-size: 13px; text-align: right; }
+.mk-field { margin: 10px 14px; }
+.mk-field label { display: block; font-weight: 600; font-size: 12px; margin-bottom: 4px; }
+.mk-field .hint { display: block; font-size: 11px; color: var(--site-ink-2, #5b6470); margin: -2px 0 4px; }
+.mk-input { height: 44px; display: flex; align-items: center; padding: 0 12px; border: 1.5px solid var(--site-line-strong, rgba(0,0,0,.35)); border-radius: var(--radius-sm); background: var(--site-bg, #fff); font-size: 16px; }
+.mk-field.error .mk-input { border-color: var(--site-error); border-width: 2px; }
+.mk-field .err { display: block; color: var(--site-error); font-weight: 600; font-size: 12px; margin-bottom: 4px; }
+.mk-errsum { margin: 10px 14px; padding: 10px 12px; border: 3px solid var(--site-error); border-radius: var(--site-radius); font-size: 12px; }
+.mk-errsum b { display: block; font-size: 13px; margin-bottom: 4px; }
+.mk-errsum a { color: var(--site-error); font-weight: 600; }
+.mk-stepper { display: inline-flex; align-items: center; border: 1.5px solid var(--site-line-strong, rgba(0,0,0,.35)); border-radius: 999px; background: var(--site-bg, #fff); }
+.mk-stepper span { width: 44px; height: 44px; display: grid; place-items: center; font-size: 18px; }
+.mk-stepper output { min-width: 28px; text-align: center; font-weight: 700; }
+.mk-sticky { flex: none; padding: 8px 0 14px; background: var(--site-bg, #fff); border-top: 1px solid var(--site-line, rgba(0,0,0,.1)); box-shadow: 0 -6px 16px rgba(0,0,0,.06); }
+.mk-sticky .row { display: flex; justify-content: space-between; align-items: baseline; margin: 0 14px; font-size: 12px; }
+.mk-sticky .row b { font-size: 17px; }
+.mk-sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--site-bg, #fff); border-radius: 16px 16px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,.25); padding-top: 8px; }
+.mk-sheet::before { content: ""; display: block; width: 36px; height: 4px; border-radius: 2px; background: rgba(0,0,0,.25); margin: 0 auto 6px; }
+.mk-scrim { position: absolute; inset: 0; background: rgba(0,0,0,.4); }
+.mk-toast { position: absolute; left: 12px; right: 12px; bottom: 16px; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 14px; border-radius: var(--radius-sm); background: #1f2329; color: #fff; font-size: 13px; box-shadow: 0 8px 20px rgba(0,0,0,.3); }
+.mk-toast a { color: #fff; font-weight: 700; text-decoration: underline; }
+.mk-banner { margin: 10px 14px; padding: 10px 12px; border-radius: var(--site-radius); background: var(--site-surface); color: var(--site-ink); font-size: 12px; }
+.mk-empty { text-align: center; padding: 36px 20px 0; }
+.mk-empty b { display: block; font: var(--head-weight) 17px/1.3 var(--font-head); margin: 8px 0 4px; }
+.mk-new { outline: 2px dashed var(--pass); outline-offset: 2px; } /* optional: highlight what changed */
+.mk-radio { display: flex; gap: 10px; align-items: flex-start; margin: 0 14px 8px; padding: 12px; border: 1.5px solid var(--site-line, rgba(0,0,0,.15)); border-radius: var(--radius-sm); background: var(--site-bg, #fff); }
+.mk-radio i { flex: none; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #8a939e; margin-top: 1px; }
+.mk-radio.on { border-color: var(--site-primary); box-shadow: inset 0 0 0 1px var(--site-primary); }
+.mk-radio.on i { border: 5px solid var(--site-primary); }
+/* Option card: a selectable sector/plan/variant with title, description and price. */
+.mk-option { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; min-height: 56px; margin: 0 14px 8px; padding: 10px 12px; border: 1.5px solid var(--site-line-strong, rgba(0,0,0,.35)); border-radius: var(--site-radius); background: var(--site-bg, #fff); color: var(--site-ink); }
+.mk-option b { font-size: 15px; line-height: 1.25; }
+.mk-option small { grid-column: 1; font-size: 13px; color: var(--site-ink-2); }
+.mk-option .mk-price { grid-row: 1 / span 2; grid-column: 2; font-size: 15px; }
+.mk-option.on { background: var(--site-primary); border-color: var(--site-primary); color: var(--site-on-primary); }
+.mk-option.on small { color: inherit; opacity: .85; }
+/* True-scale screens: lay the mockup out at the device's CSS width (390 px for an
+   iPhone 13) and scale it into the 270 px frame, so type and target sizes are
+   compared at the size users see. Use for any finding about text or target size. */
+.mk-390 { width: 390px; height: 664px; transform: scale(.6923); transform-origin: 0 0; }
+.mk-390.mk { inset: auto; top: 0; left: 0; }
+/* Code proposals: when the fix is invisible (markup, ARIA, focus order), the Proposed
+   figure may show the corrected code instead of a screen. */
+figure.code { margin: 0; }
+figure.code pre { margin: 0; max-height: 460px; overflow: auto; padding: 14px 16px; border-radius: var(--radius); background: var(--surface-2); color: var(--ink); font: 12.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+figure.code ins { text-decoration: none; background: var(--low-bg); color: var(--low); }
+figure.code del { background: var(--crit-bg); color: var(--crit); }
+
+/* ---------- roadmap, footer, lightbox ---------- */
+.roadmap { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); }
+.roadmap ul { padding-left: 18px; margin: 0; }
+.roadmap li { margin-bottom: 6px; }
+footer.end { padding: 40px 0 60px; color: var(--ink-2); font-size: 14px; }
+dialog.lb { border: 0; padding: 0; background: transparent; max-width: 96vw; max-height: 96vh; }
+dialog.lb::backdrop { background: rgba(0,0,0,.8); }
+.lb-inner { background: var(--surface); border-radius: var(--radius); padding: 12px; display: grid; gap: 10px; justify-items: center; }
+.lb-inner img { max-width: 92vw; max-height: 80vh; width: auto; height: auto; border-radius: var(--radius-sm); }
+.lb-cap { font-size: 14px; color: var(--ink-2); max-width: 70ch; margin: 0; }
+.lb-close { min-height: 44px; padding: 8px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+@media print {
+  nav.toc, .filters, .theme-toggle { display: none; }
+  article.finding, .card { break-inside: avoid; box-shadow: none; }
+  article.finding[hidden] { display: block; }
+  .gallery { flex-wrap: wrap; overflow: visible; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<!-- ============================ COVER ============================ -->
+<header class="top">
+  <div class="wrap">
+    <div class="bar">
+      <p class="brandline"><!-- optional: <img src="data:…" alt=""> -->{{SITE_NAME}} · {{SCOPE}}</p>
+      <button class="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
+    </div>
+    <div class="cover-grid">
+      <div>
+        <h1>{{HEADLINE_VERDICT}}</h1>
+        <p class="lede">{{LEDE: what was audited, against which lenses, and what the reader will find}}</p>
+        <ul class="meta" aria-label="Report details">
+          <li>{{DATE}}</li>
+          <li>{{URL_OR_HOST}}</li>
+          <li>{{DEVICES}}</li>
+          <li>{{LOCALE}}</li>
+        </ul>
+      </div>
+      <div class="cover-phones" aria-hidden="true">
+        <div class="mini"><img src="{{DATA_URI_PHONE_SCREEN_1}}" alt=""></div>
+        <div class="mini"><img src="{{DATA_URI_PHONE_SCREEN_2}}" alt=""></div>
+        <div class="mini"><img src="{{DATA_URI_PHONE_SCREEN_3}}" alt=""></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Report sections">
+  <div class="wrap">
+    <ul>
+      <li><a href="#summary">Summary</a></li>
+      <li><a href="#journey">Journey</a></li>
+      <li><a href="#lenses">Lenses</a></li>
+      <li><a href="#findings">Findings</a></li>
+      <li><a href="#a11y">Accessibility</a></li>
+      <li><a href="#devices">Devices</a></li>
+      <li><a href="#perf">Performance</a></li>
+      <li><a href="#strengths">What works</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#method">Method</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="content">
+<div class="wrap">
+
+<!-- ============================ SUMMARY ============================ -->
+<section id="summary" aria-labelledby="h-summary">
+  <h2 id="h-summary">Executive summary</h2>
+
+  <!-- 4–6 key numbers, each a measured fact that anchors a finding. -->
+  <ul class="stats" aria-label="Key numbers">
+    <!-- EXAMPLE: replace -->
+    <li><b>2.4</b><span>screens of scrolling before the search field on an iPhone 13</span></li>
+    <li><b>78×18&nbsp;px</b><span>the only tappable area on each product card on desktop</span></li>
+    <li><b>0</b><span>results when typing "Brasil" in the country filter, which truncates it to "Bra"</span></li>
+    <li><b>5.6&nbsp;s</b><span>Largest Contentful Paint on a simulated 4G phone</span></li>
+  </ul>
+
+  <div class="verdict">
+    <div class="card">
+      <h3>Verdict</h3>
+      <!-- EXAMPLE: replace -->
+      <p>Northwind's catalogue cards are excellent on phones, but <strong>finding a product means working outside the screen</strong>: search sits two screens down and results load below the fold with no count.</p>
+      <ul class="plain">
+        <li>the first screen shows <strong>one promotional product</strong>, not the catalogue;</li>
+        <li>after searching, <strong>the screen does not move</strong>, so people repeat the search;</li>
+        <li>from 768&nbsp;px up, <strong>only a 78×18&nbsp;px link</strong> opens a product.</li>
+      </ul>
+      <div class="callout">In Krug's terms, the list already carries the visitor; the rest of the page still makes them think.</div>
+      <p class="muted small">Severity scale: <span class="badge b-crit">Critical</span> blocks the task or loses money/data · <span class="badge b-high">High</span> large, frequent friction or WCAG AA failure on the main path · <span class="badge b-med">Medium</span> noticeable friction · <span class="badge b-low">Low</span> polish.</p>
+    </div>
+    <div class="card">
+      <h3>Scorecard</h3>
+      <p class="big-score"><strong>{{OVERALL_SCORE}}</strong><span>/ 5 overall</span></p>
+      <p class="muted small">Expert score per pillar: 1 broken · 2 poor · 3 works with friction · 4 good · 5 excellent.</p>
+      <ul class="score-list">
+        <!-- EXAMPLE: replace (width = score / 5 × 100%) -->
+        <li><span class="lbl">Usability principles</span><span class="val">2.8</span><span class="track"><span class="fill" style="width:56%"></span></span><span class="note">Great list; buried search and off-screen feedback.</span></li>
+        <li><span class="lbl">Platform &amp; design-system conventions</span><span class="val">3.0</span><span class="track"><span class="fill" style="width:60%"></span></span><span class="note">Filters as a long inline form instead of a sheet.</span></li>
+        <li><span class="lbl">Accessibility (WCAG 2.2 AA)</span><span class="val">3.5</span><span class="track"><span class="fill" style="width:70%"></span></span><span class="note">Good contrast and semantics; focus hidden under sticky bar.</span></li>
+        <li><span class="lbl">Mobile &amp; forms</span><span class="val">2.5</span><span class="track"><span class="fill" style="width:50%"></span></span><span class="note">Content-last first screen; no inline validation.</span></li>
+        <li><span class="lbl">Performance (outside overall)</span><span class="val">3.0</span><span class="track"><span class="fill" style="width:60%"></span></span><span class="note">CLS ≈ 0; LCP 3.5–5.6&nbsp;s on 4G.</span></li>
+      </ul>
+      <p class="muted small">{{SCORE_METHOD, e.g. "Each pillar starts at 5 and loses 1.5 / 0.75 / 0.35 / 0.1 per Critical / High / Medium / Low finding in it, capped at 4.0 when its checklist fails on the main task. Overall is the mean of the four pillars, capped at 3.9 because of a High finding on the main task."}}</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>Top fixes</h3>
+    <ol class="priorities">
+      <!-- EXAMPLE: replace. Ordered by priority (scoring.md). 5–8 items. -->
+      <li><span class="what"><a href="#f01">F01</a> · Take people to the results after a search and say how many came back</span><span class="why">Scroll to the results heading, move focus, and announce "5 products for 'boots'". <span class="badge b-high">High</span> <span class="tag">Impact ↑ Major · search-to-product rate</span> <span class="tag">Effort S</span></span></li>
+    </ol>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>Krug's trunk test</h3>
+    <p class="muted" style="font-size:15px">Dropped onto the page cold: can a visitor tell where they are and what they can do?</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Trunk test results">
+      <table>
+        <thead><tr><th scope="col">Question</th><th scope="col">Phone (portrait)</th><th scope="col">Desktop</th></tr></thead>
+        <tbody>
+          <!-- EXAMPLE: replace. Rows: site ID, page name (H1), major sections, local options, you-are-here, search. -->
+          <tr><th scope="row">What site is this?</th><td class="st-pass">Yes · logo</td><td class="st-pass">Yes</td></tr>
+          <tr><th scope="row">What page is this? (H1)</th><td class="st-fail">No · H1 is a promo title</td><td class="st-fail">No</td></tr>
+          <tr><th scope="row">Where do I search?</th><td class="st-fail">2.4 screens down</td><td class="st-part">Below the fold</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ JOURNEY ============================ -->
+<section id="journey" aria-labelledby="h-journey">
+  <h2 id="h-journey">The primary task, step by step</h2>
+  <p>{{SCENARIO: who, on which device, wants to do what}}. Red steps are where people tend to hesitate, err or give up.</p>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Today</h3>
+      <ol class="journey">
+        <!-- EXAMPLE: replace. One <li> per step; .dot.pain for friction; thumbnail optional. -->
+        <li><span class="dot">1</span><div><span class="step">Opens the catalogue</span><div class="detail">The cookie banner covers half the screen. <a href="#f02">F02</a></div></div><img class="jt" src="{{DATA_URI}}" alt=""></li>
+        <li><span class="dot pain">2</span><div><span class="step">Searches "boots"</span><div class="detail">The screen stays still; results start below the fold. <a href="#f01">F01</a></div></div><img class="jt" src="{{DATA_URI}}" alt=""></li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Target flow</h3>
+      <ol class="journey">
+        <!-- EXAMPLE: replace -->
+        <li><span class="dot">1</span><div><span class="step">First screen: page title, search and category chips</span><div class="detail">See the proposal in <a href="#f02">F02</a>.</div></div></li>
+      </ol>
+      <p class="muted small" style="margin-top:8px">{{N}} steps instead of {{M}}, no result off-screen.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>How far is the task from the first screen?</h3>
+    <p class="muted" style="font-size:15px">Page length and position of the key elements, in screen-heights of each device. Green is the first screen.</p>
+    <div class="dist" role="list">
+      <!-- EXAMPLE: replace. Scale: pick the longest page in screens (S); width/left = value / S × 100%; fold = 1 / S × 100%. -->
+      <div class="dist-row" role="listitem" aria-label="iPhone 13: page 6.1 screens; search at 2.05; first result at 2.95">
+        <div class="name">iPhone 13 · 390×664 <small>· 6.1 screens</small></div>
+        <div class="dist-track"><div class="dist-len" style="width:43.6%"></div><div class="dist-fold" style="width:7.1%"></div><div class="dist-mark m2" style="left:14.6%"></div><div class="dist-mark" style="left:21.1%"></div></div>
+        <p class="dist-note" aria-hidden="true">Search at 2.05 · first result at 2.95</p>
+      </div>
+    </div>
+    <div class="dist-legend" aria-hidden="true"><span><i style="background:var(--low-bg)"></i>First screen</span><span><i style="background:color-mix(in srgb, var(--brand) 22%, transparent)"></i>Page length (scale: {{S}} screens)</span><span><i style="background:var(--brand)"></i>{{ELEMENT_A, e.g. Search field}}</span><span><i style="background:var(--accent)"></i>{{ELEMENT_B, e.g. First result}}</span></div>
+  </div>
+</section>
+
+<!-- ============================ LENSES ============================ -->
+<section id="lenses" aria-labelledby="h-lenses">
+  <h2 id="h-lenses">Evaluation by lens</h2>
+  <p>Every checklist item with its verdict and the finding that holds the evidence.</p>
+
+  <div class="pillar-h"><h3>Pillar 1 · Usability principles</h3><span class="muted">Krug · Nielsen · Norman · Fitts</span></div>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Pillar 1 verdicts">
+    <table>
+      <thead><tr><th scope="col">Lens · item</th><th scope="col">Verdict</th><th scope="col">Evidence</th></tr></thead>
+      <tbody>
+        <!-- EXAMPLE: replace. One row per checklist item from frameworks.md that is not N/A (Pass/Partial/Fail). -->
+        <tr><td>Nielsen #1 · Visibility of system status</td><td><span class="pill fail">Fail</span></td><td>Search results load off-screen and the status always says "Updated". <a href="#f01">F01</a></td></tr>
+        <tr><td>Fitts · F1 Target size</td><td><span class="pill part">Partial</span></td><td>Cards 87&nbsp;px tall (good); filter toggles 38&nbsp;px; language links 33×20&nbsp;px.</td></tr>
+        <tr><td>Norman · D2 No false signifiers</td><td><span class="pill pass">Pass</span></td><td>Every element that looks clickable is clickable.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pillar-h"><h3>Pillar 2 · Platform &amp; design-system conventions</h3><span class="muted">Apple HIG · Shopify Polaris · GOV.UK Design System</span></div>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Pillar 2 verdicts">
+    <table>
+      <thead><tr><th scope="col">Lens · item</th><th scope="col">Verdict</th><th scope="col">Evidence</th></tr></thead>
+      <tbody>
+        <!-- EXAMPLE: replace -->
+        <tr><td>HIG · H4 Sheets and modality</td><td><span class="pill fail">Fail</span></td><td>Filters expand a 709-px form mid-page instead of a sheet. <a href="#f03">F03</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pillar-h"><h3>Pillar 3 · Accessibility</h3><span class="muted">WCAG 2.2 AA · full checklist in <a href="#a11y">Accessibility</a></span></div>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Pillar 3 verdicts by principle">
+    <table>
+      <thead><tr><th scope="col">Principle</th><th scope="col">Verdict</th><th scope="col">Evidence</th></tr></thead>
+      <tbody>
+        <!-- EXAMPLE: replace. Rows: Perceivable, Operable, Understandable, Robust (summary of the checklist). -->
+        <tr><td>Operable</td><td><span class="pill part">Partial</span></td><td>All controls keyboard-reachable; focused fields can hide under the sticky chat button (2.4.11). <a href="#f04">F04</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pillar-h"><h3>Pillar 4 · Mobile &amp; forms</h3><span class="muted">Wroblewski · cross-device consistency</span></div>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Pillar 4 verdicts">
+    <table>
+      <thead><tr><th scope="col">Lens · item</th><th scope="col">Verdict</th><th scope="col">Evidence</th></tr></thead>
+      <tbody>
+        <!-- EXAMPLE: replace -->
+        <tr><td>Wroblewski · W1 Content first</td><td><span class="pill fail">Fail</span></td><td>Search is 2.4 screens down on an iPhone 13. <a href="#f02">F02</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================ FINDINGS ============================ -->
+<section id="findings" aria-labelledby="h-findings">
+  <h2 id="h-findings">Findings</h2>
+  <p>Each finding shows what was observed, why it matters, what to do and what it is expected to change. <span class="ftag today" style="position:static">Today</span> captures are real screenshots; <span class="ftag proposed" style="position:static">Proposed</span> mockups are illustrative wireframes, not final design. Tap a capture to enlarge it.</p>
+  <div class="filters" role="group" aria-label="Filter findings by severity">
+    <!-- Counts must match the findings below; omit a button when its count is 0. -->
+    <button type="button" data-filter="all" aria-pressed="true">All ({{N_ALL}})</button>
+    <button type="button" data-filter="crit" aria-pressed="false">Critical ({{N_CRIT}})</button>
+    <button type="button" data-filter="high" aria-pressed="false">High ({{N_HIGH}})</button>
+    <button type="button" data-filter="med" aria-pressed="false">Medium ({{N_MED}})</button>
+    <button type="button" data-filter="low" aria-pressed="false">Low ({{N_LOW}})</button>
+  </div>
+
+  <!-- EXAMPLE: replace. Copy this <article> once per finding, ids f01, f02… in priority order. -->
+  <article class="finding" id="f01" data-sev="high">
+    <div class="f-head">
+      <span class="f-id">F01</span><span class="badge b-high">High</span>
+      <span class="tag">WCAG 4.1.3</span><span class="tag">Nielsen #1</span><span class="tag">Norman · Feedback</span><span class="tag">Polaris · P3</span>
+      <h3>Searching doesn't bring people to the results or tell them how many came back</h3>
+    </div>
+    <div class="f-body">
+      <div class="f-text">
+        <h4>Observed</h4>
+        <ul>
+          <li>After searching "boots" on an iPhone 13 the viewport doesn't move (<code>scrollY</code> 1042 before and after); the list starts <strong>81&nbsp;px below the fold</strong>.</li>
+          <li>The status next to the list always reads "Updated", whether 5, 12 or 0 products came back.</li>
+        </ul>
+        <h4>Why it matters</h4>
+        <ul>
+          <li><strong>Nielsen #1</strong>: people must see the effect of their action; without it they search again or assume it failed.</li>
+          <li><strong>WCAG 4.1.3</strong>: a status message exists but carries no result, so screen-reader users hear nothing useful.</li>
+        </ul>
+        <h4>Recommendation</h4>
+        <ul>
+          <li>After results load, scroll to the results heading (offsetting the sticky header) and move focus to it; respect <code>prefers-reduced-motion</code>.</li>
+          <li>Replace "Updated" with "5 products for 'boots'" in a polite live region; show active filters as removable chips.</li>
+        </ul>
+        <p class="where">Where: <code>/search</code> results list · component "Search results header".</p>
+      </div>
+      <aside class="impact" aria-label="Predicted impact of F01">
+        <h4>Predicted impact</h4>
+        <dl>
+          <dt>Metric</dt><dd>Search → product click-through</dd>
+          <dt>Change</dt><dd><span class="arrow">↑</span> Major</dd>
+          <dt>Who</dt><dd>Every visitor who searches on a phone</dd>
+          <dt>Confidence</dt><dd>High</dd>
+          <dt>Effort</dt><dd>S</dd>
+        </dl>
+        <p class="measure">Why: results off-screen make people repeat the search or leave. Measure: search exits and repeat searches, 2 weeks before/after.</p>
+      </aside>
+    </div>
+    <div class="gallery" data-mock="search-feedback" tabindex="0" role="region" aria-label="Images for F01">
+      <figure class="phone"><span class="ftag today">Today</span>
+        <div class="device"><div class="screen">
+          <button type="button" class="shot"><img src="{{DATA_URI_SCREENSHOT}}" alt="Search page after searching boots: the search field (marker 1) and the category grid (marker 2) fill the screen; no results are visible." loading="lazy">
+            <span class="mark" data-n="1" style="left:4%;top:18%;width:92%;height:11%"></span>
+            <span class="mark" data-n="2" style="left:4%;top:34%;width:92%;height:38%"></span>
+          </button>
+        </div></div>
+        <figcaption><strong>After tapping "Search"</strong>
+          <ol class="callouts"><li><span class="n">1</span><span>The search ran, but the screen didn't move.</span></li><li><span class="n">2</span><span>Results start 81&nbsp;px below this view.</span></li></ol>
+        </figcaption>
+      </figure>
+      <figure class="phone"><span class="ftag proposed">Proposed</span>
+        <div class="device" role="img" aria-label="Proposal: compact header, search field with boots, active filter chips, heading 5 products for boots, and the result cards starting right below.">
+          <div class="screen"><div class="mk" aria-hidden="true">
+            <div class="mk-hdr"><span class="mk-logo">NORTHWIND</span><span class="mk-icons"><span class="mk-icon">⌕</span><span class="mk-icon">☰</span></span></div>
+            <div class="mk-scroll">
+              <div class="mk-search">⌕ <span style="color:var(--site-ink,#16191d);font-weight:600">boots</span><span style="margin-left:auto">✕</span></div>
+              <div class="mk-chips"><span class="mk-chip on">"boots" ✕</span><span class="mk-chip">Women ✕</span><span class="mk-chip">Clear all</span></div>
+              <div class="mk-h1 mk-new">5 products for "boots"<small>sorted by relevance</small></div>
+              <div class="mk-card"><span class="mk-thumb"></span><span><b>Trail Boot</b><small>Waterproof · 6 colours</small></span><span class="mk-price">$129</span></div>
+              <div class="mk-card"><span class="mk-thumb"></span><span><b>City Chelsea Boot</b><small>Leather · 3 colours</small></span><span class="mk-price">$149</span></div>
+              <div class="mk-card"><span class="mk-thumb"></span><span><b>Runner Boot</b><small>Wool · 4 colours</small></span><span class="mk-price">$110</span></div>
+            </div>
+          </div></div>
+        </div>
+        <figcaption><strong>The results come to the person.</strong>
+          <ol class="callouts"><li><span class="n ok">1</span><span>View scrolls to the count, which is announced.</span></li><li><span class="n ok">2</span><span>Active filters are visible and removable.</span></li></ol>
+        </figcaption>
+      </figure>
+    </div>
+  </article>
+</section>
+
+<!-- ============================ ACCESSIBILITY ============================ -->
+<section id="a11y" aria-labelledby="h-a11y">
+  <h2 id="h-a11y">Accessibility audit (WCAG 2.2 AA)</h2>
+  <p>Automated probes, DOM measurements, a keyboard pass and manual review. It does not replace testing with people who use assistive technology.</p>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="WCAG 2.2 checklist">
+    <table>
+      <thead><tr><th scope="col">Criterion</th><th scope="col">Status</th><th scope="col">Notes</th></tr></thead>
+      <tbody>
+        <!-- EXAMPLE: replace. Every A/AA criterion from frameworks.md; status Pass / Partial / Fail / N/A / Not tested. -->
+        <tr><td>1.4.3 Contrast (minimum)</td><td class="st-pass">Pass</td><td>Measured 4.8:1 to 11.8:1 on all sampled text.</td></tr>
+        <tr><td>2.4.11 Focus not obscured</td><td class="st-fail">Fail</td><td>Focused email field hidden under the chat button at 390&nbsp;px. <a href="#f04">F04</a></td></tr>
+        <tr><td>1.2.2 Captions</td><td class="st-na">N/A</td><td>No video or audio.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================ DEVICES ============================ -->
+<section id="devices" aria-labelledby="h-devices">
+  <h2 id="h-devices">Consistency across devices</h2>
+  <p>Same page, same data, {{N}} viewports. Positions are in screen-heights of that device.</p>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Measurements by device">
+    <table>
+      <thead><tr><th scope="col">Viewport</th><th scope="col">Page</th><th scope="col">{{ELEMENT_A}}</th><th scope="col">{{ELEMENT_B}}</th><th scope="col">Targets &lt; 44&nbsp;px</th><th scope="col">Horizontal scroll</th><th scope="col">Note</th></tr></thead>
+      <tbody>
+        <!-- EXAMPLE: replace. One row per viewport from summary.json. -->
+        <tr><td>iPhone 13 · 390×664</td><td class="num">6.1 screens</td><td class="num st-fail">2.05</td><td class="num">2.95</td><td class="num">12</td><td class="st-pass">No</td><td>Reference device.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================ PERFORMANCE ============================ -->
+<section id="perf" aria-labelledby="h-perf">
+  <h2 id="h-perf">Performance</h2>
+  <p>{{PROFILE, e.g. Phone viewport, simulated 4G (150 ms RTT, 1.6 Mbps), 4× CPU slowdown, 3 runs, first without cache.}}</p>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Performance metrics">
+    <table>
+      <thead><tr><th scope="col">Run</th><th scope="col">TTFB</th><th scope="col">FCP</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Requests</th><th scope="col">Transferred</th></tr></thead>
+      <tbody>
+        <!-- EXAMPLE: replace. st-pass / st-part / st-fail by Core Web Vitals thresholds. -->
+        <tr><td>1 (cold)</td><td class="num">0.93&nbsp;s</td><td class="num">1.6&nbsp;s</td><td class="num st-fail">5.6&nbsp;s</td><td class="num st-pass">0.00</td><td class="num">36</td><td class="num">707&nbsp;KB</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted small">Core Web Vitals: LCP ≤ 2.5&nbsp;s good, &gt; 4&nbsp;s poor · INP ≤ 200&nbsp;ms good · CLS ≤ 0.1 good. Nielsen's Law: bandwidth grows slower than page weight, so lean pages stay a design requirement.</p>
+</section>
+
+<!-- ============================ STRENGTHS ============================ -->
+<section id="strengths" aria-labelledby="h-strengths">
+  <h2 id="h-strengths">What works well (keep it)</h2>
+  <div class="grid-2">
+    <!-- EXAMPLE: replace. 2–4 cards grouped by theme, concrete and measured. -->
+    <div class="card"><h3>Product list</h3><ul class="plain"><li>Compact 87-px cards, fully tappable, price in bold.</li><li>No horizontal scroll at any of the 5 viewports.</li></ul></div>
+  </div>
+</section>
+
+<!-- ============================ ROADMAP ============================ -->
+<section id="roadmap" aria-labelledby="h-roadmap">
+  <h2 id="h-roadmap">Suggested roadmap</h2>
+  <div class="roadmap">
+    <!-- EXAMPLE: replace. Buckets from scoring.md. -->
+    <div class="card"><h3>Quick wins (one sprint)</h3><ul><li><a href="#f01">F01</a> Scroll to and announce results</li></ul></div>
+    <div class="card"><h3>Next 1–2 sprints</h3><ul><li><a href="#f02">F02</a> New first screen with title, search and chips</li></ul></div>
+    <div class="card"><h3>Strategic</h3><ul><li>Usability test with 5 phone users; a VoiceOver and TalkBack session</li></ul></div>
+    <div class="card"><h3>Backlog</h3><ul><li>Low findings, and Medium findings with minor impact and effort M or L</li></ul></div>
+  </div>
+</section>
+
+<!-- ============================ METHOD ============================ -->
+<section id="method" aria-labelledby="h-method">
+  <h2 id="h-method">Method and limitations</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>How it was evaluated</h3>
+      <ul class="plain">
+        <li><strong>Expert review</strong> against WCAG 2.2 AA, Apple HIG, Shopify Polaris and the GOV.UK Design System, and the principles of Krug, Nielsen, Norman, Wroblewski and Fitts.</li>
+        <li><strong>Browser measurements</strong> at {{VIEWPORTS}}: target sizes, font sizes, contrast, reflow, headings, landmarks, form fields and Core Web Vitals.</li>
+        <li><strong>Task walk-through</strong>: {{PRIMARY_TASK}}, plus a keyboard-only pass.</li>
+        <li><strong>Mockups</strong> are illustrative wireframes in the site's visual language, not final design.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Limitations</h3>
+      <ul class="plain">
+        <!-- EXAMPLE: replace -->
+        <li>Anonymous visit only: account, checkout and payment flows were not audited.</li>
+        <li>Chromium emulation, not real Safari or physical devices; no screen-reader session.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>References</h3>
+    <ul class="plain">
+      <li>W3C, <em>Web Content Accessibility Guidelines (WCAG) 2.2</em> (2023).</li>
+      <li>Apple, <em>Human Interface Guidelines</em>.</li>
+      <li>Shopify, <em>Polaris Design System</em>.</li>
+      <li>Government Digital Service, <em>GOV.UK Design System</em>.</li>
+      <li>Steve Krug, <em>Don't Make Me Think, Revisited</em> (2014).</li>
+      <li>Jakob Nielsen, "10 Usability Heuristics for User Interface Design" and "Nielsen's Law of Internet Bandwidth", Nielsen Norman Group.</li>
+      <li>Don Norman, <em>The Design of Everyday Things</em>, revised edition (2013).</li>
+      <li>Luke Wroblewski, <em>Mobile First</em> (2011) and <em>Web Form Design: Filling in the Blanks</em> (2008).</li>
+      <li>Paul M. Fitts, "The information capacity of the human motor system in controlling the amplitude of movement" (1954).</li>
+      <li>web.dev, Core Web Vitals thresholds.</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer class="end">
+  <div class="wrap"><p>Prepared on {{DATE}} from {{URL_OR_HOST}}. Design system: {{THEME_SOURCE, e.g. DESIGN.md / sampled from the live site}}.</p></div>
+</footer>
+
+<dialog class="lb" id="lightbox" aria-label="Enlarged capture">
+  <div class="lb-inner"><img alt=""><p class="lb-cap"></p><button type="button" class="lb-close">Close</button></div>
+</dialog>
+
+<script>
+(function () {
+  // Severity filters
+  var buttons = document.querySelectorAll('.filters button');
+  var cards = document.querySelectorAll('article.finding');
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var f = btn.getAttribute('data-filter');
+      buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+      cards.forEach(function (c) { c.hidden = !(f === 'all' || c.getAttribute('data-sev') === f); });
+    });
+  });
+  // A link to a hidden finding resets the filter first.
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#f"]');
+    if (!a) return;
+    var t = document.querySelector(a.getAttribute('href'));
+    if (t && t.closest('article.finding[hidden]') && buttons[0]) buttons[0].click();
+  });
+  // Lightbox
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img'), lbCap = lb.querySelector('.lb-cap');
+  document.querySelectorAll('button.shot').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var img = b.querySelector('img');
+      lbImg.src = img.currentSrc || img.src; lbImg.alt = img.alt; lbCap.textContent = img.alt;
+      if (typeof lb.showModal === 'function') lb.showModal(); else window.open(lbImg.src);
+    });
+  });
+  lb.querySelector('.lb-close').addEventListener('click', function () { lb.close(); });
+  lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
+  // Theme toggle (remembers the choice when storage is available)
+  var root = document.documentElement, toggle = document.querySelector('.theme-toggle');
+  try { var saved = localStorage.getItem('ux-audit-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  function isDark() { var t = root.getAttribute('data-theme'); return t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches); }
+  function sync() { toggle.setAttribute('aria-pressed', String(isDark())); toggle.textContent = isDark() ? 'Light mode' : 'Dark mode'; }
+  toggle.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('ux-audit-theme', next); } catch (e) {}
+    sync();
+  });
+  sync();
+})();
+</script>
+</body>
+</html>
