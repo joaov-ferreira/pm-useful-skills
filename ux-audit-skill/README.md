@@ -55,6 +55,12 @@ npm i -D playwright && npx playwright install chromium
 
 Without Playwright, the agent drives any browser tool it has and evaluates `probe.js` / `extract-tokens.js` in the page.
 
+## Example report
+
+See a full report produced by the skill: **[UX audit of gov.br (homepage and search journey)](https://joaov-ferreira.github.io/pm-useful-skills/ux-audit-skill/examples/gov-br/)**. The source is in [`examples/gov-br/`](examples/gov-br/index.html).
+
+It is an independent example, not an official gov.br document. Its performance numbers are lab measurements on a simulated slow 4G connection.
+
 ## Use
 
 Ask your agent in plain language. Give it a URL and, ideally, the one thing a visitor comes to do:
