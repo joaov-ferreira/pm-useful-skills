@@ -1,6 +1,6 @@
 # PM Useful Skills
 
-A collection of useful AI skills for product managers.
+A collection of useful AI skills for product managers. Skills use the open `SKILL.md` format and work in Claude Code, OpenAI Codex and Google Antigravity; each skill's README has the install steps.
 
 > **Work in progress.** This repository is under active development. More skills will be added over time, and existing ones may change.
 

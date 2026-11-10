@@ -1,4 +1,4 @@
-# ux-audit — an agent skill for evidence-based UX audits
+# ux-audit — an agent skill (Claude Code, Codex, Antigravity) for evidence-based UX audits
 
 Give your AI agent a public URL and get back a **self-contained HTML audit report** in the audited product's own design system, with:
 
@@ -27,7 +27,7 @@ Every finding is judged through the same nine lenses:
 6. **Design fixes**: Today/Proposed galleries for every Critical and High finding.
 7. **Write, validate, review**: `check-report.mjs` validates the HTML, and a fresh-context reviewer checks every claim against the evidence.
 
-Capture, theming, mockups and review are written as subagent briefs, so agents that can delegate (Claude Code, for example) run them in parallel with a clean context. Each brief names a model tier: mechanical jobs (capture) run on a small model such as Haiku, rule-bound craft (theming, most mockups) on a mid model such as Sonnet, and judgement (evaluation, rating, review, Critical mockups) stays on the main model. Agents that can't delegate do the same work inline.
+Capture, theming, mockups and review are written as subagent briefs, so agents that can delegate (Claude Code, Codex or Antigravity, for example) run them in parallel with a clean context. Each brief names a model tier: mechanical jobs (capture) run on a small model such as Haiku, rule-bound craft (theming, most mockups) on a mid model such as Sonnet, and judgement (evaluation, rating, review, Critical mockups) stays on the main model. Agents that can't delegate do the same work inline.
 
 ## Install
 
@@ -44,6 +44,26 @@ Capture, theming, mockups and review are written as subagent briefs, so agents t
 git clone https://github.com/joaov-ferreira/pm-useful-skills.git
 cp -r pm-useful-skills/ux-audit-skill/skills/ux-audit ~/.claude/skills/
 ```
+
+**OpenAI Codex**: Codex reads the same `SKILL.md` folder. Copy it into the repo scope (`<project>/.agents/skills/`) or your user scope (`~/.codex/skills/`; newer builds also read `~/.agents/skills/`):
+
+```bash
+git clone https://github.com/joaov-ferreira/pm-useful-skills.git
+mkdir -p ~/.codex/skills
+cp -r pm-useful-skills/ux-audit-skill/skills/ux-audit ~/.codex/skills/
+```
+
+Restart Codex, then run `$ux-audit https://example.com` or just describe the audit in plain language. `agents/openai.yaml` supplies the display name, short description and default prompt Codex shows in its skill list.
+
+**Google Antigravity**: Antigravity uses the same format. Copy the folder into the workspace (`<project>/.agents/skills/`, or `.agent/skills/` on older versions) or globally (`~/.gemini/antigravity/skills/`; newer versions also read `~/.gemini/config/skills/`):
+
+```bash
+git clone https://github.com/joaov-ferreira/pm-useful-skills.git
+mkdir -p ~/.gemini/antigravity/skills
+cp -r pm-useful-skills/ux-audit-skill/skills/ux-audit ~/.gemini/antigravity/skills/
+```
+
+Antigravity discovers skills at startup and loads this one when your request matches its description. Skill paths have changed between releases of both tools, so check your version's docs if the skill does not show up.
 
 **Other agents**: point your agent at `skills/ux-audit/SKILL.md`; everything else is reached from there by relative links.
 
@@ -71,7 +91,7 @@ Ask your agent in plain language. Give it a URL and, ideally, the one thing a vi
 
 > Audit https://example.com/pricing on phone and desktop. Our design system is in ./DESIGN.md.
 
-In Claude Code you can also invoke it directly: `/ux-audit https://example.com` as a plain skill, or `/ux-audit:ux-audit https://example.com` when installed as a plugin.
+In Codex, `$ux-audit` invokes it by name. In Claude Code you can also invoke it directly: `/ux-audit https://example.com` as a plain skill, or `/ux-audit:ux-audit https://example.com` when installed as a plugin.
 
 What you can set in the request (the agent infers sensible defaults and states them):
 
@@ -103,6 +123,8 @@ Design documents drift from the shipped product. The skill always compares a doc
 ```
 skills/ux-audit/
   SKILL.md                    workflow (entry point)
+  agents/
+    openai.yaml               Codex UI metadata (ignored by other agents)
   references/
     frameworks.md             the nine lenses as checklists
     scoring.md                severity, impact, effort, priority, scores

@@ -6,9 +6,9 @@ Several jobs in this workflow are self-contained and benefit from a **clean cont
 
 Not every job needs the strongest model. Match the tier to the judgement the job requires:
 
-- **Small/fast tier** (Haiku in Claude Code): mechanical work with a fixed procedure and a checkable output. Running a script, reading JSON, copying numbers into a table.
-- **Mid tier** (Sonnet): bounded craft with clear rules and a visual check. Matching a brand, building a mockup from a written spec.
-- **Main model** (the one running the skill, typically Opus): open judgement. Deciding what is a problem, how bad it is, and whether a claim holds.
+- **Small/fast tier** (for example Haiku, GPT mini-class or Gemini Flash-class models): mechanical work with a fixed procedure and a checkable output. Running a script, reading JSON, copying numbers into a table.
+- **Mid tier** (for example Sonnet, or a mid-size GPT or Gemini model): bounded craft with clear rules and a visual check. Matching a brand, building a mockup from a written spec.
+- **Main model** (the one running the skill, typically your strongest model): open judgement. Deciding what is a problem, how bad it is, and whether a claim holds.
 
 | Job | Step | Tier | Why this tier | Runs in parallel with |
 |---|---|---|---|---|
@@ -23,7 +23,7 @@ Evaluation (step 4), rating (step 5) and writing (step 7) stay with the main age
 
 In testing on one product page, theming and each mockup took roughly 100K tokens apiece and the review about 170K. Moving theming and Medium/High mockups to the mid tier, and capture to the small tier, cuts the cost of a typical audit substantially without touching the judgement jobs.
 
-**Setting the tier.** In Claude Code, pass `model: "haiku"` or `model: "sonnet"` to the Agent tool; omit it to inherit the main model. In other environments, use whatever model selector the subagent call offers, or run the job inline when there is none. If a lower tier's output fails its *done* check twice, redo the job one tier up rather than patching it yourself.
+**Setting the tier.** In Claude Code, pass `model: "haiku"` or `model: "sonnet"` to the Agent tool; omit it to inherit the main model. In Codex, spawn a subagent and set its model when asked (or let it inherit). In Antigravity, use a sub-agent or a Manager-surface agent where available. Elsewhere, use whatever model selector the subagent call offers, or run the job inline when there is none. If a lower tier's output fails its *done* check twice, redo the job one tier up rather than patching it yourself.
 
 ## Rules for every brief
 

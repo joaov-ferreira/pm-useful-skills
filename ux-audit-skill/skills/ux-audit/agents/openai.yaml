@@ -1,0 +1,6 @@
+interface:
+  display_name: "UX Audit"
+  short_description: "Evidence-based UX and accessibility audit of a public URL, as an HTML report"
+  default_prompt: "Use $ux-audit to audit the UX of https://example.com. The main task is finding a product and adding it to the cart."
+policy:
+  allow_implicit_invocation: true
