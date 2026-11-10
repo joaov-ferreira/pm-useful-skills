@@ -57,7 +57,7 @@ Without Playwright, the agent drives any browser tool it has and evaluates `prob
 
 ## Example report
 
-See a full report produced by the skill: **[UX audit of gov.br (homepage and search journey)](https://joaov-ferreira.github.io/pm-useful-skills/ux-audit-skill/examples/gov-br/)**. The source is in [`examples/gov-br/`](examples/gov-br/index.html).
+See a full report produced by the skill: **[UX audit of gov.br (homepage and search journey)](https://joaov-ferreira.github.io/pm-useful-skills/ux-audit-skill/examples/gov-br/)**, also available **[em português](https://joaov-ferreira.github.io/pm-useful-skills/ux-audit-skill/examples/gov-br/pt-br/)**. A button at the top of the report switches between the two languages. The source is in [`examples/gov-br/`](examples/gov-br/).
 
 It is an independent example, not an official gov.br document. Its performance numbers are lab measurements on a simulated slow 4G connection.
 

@@ -364,7 +364,7 @@ dialog.lb::backdrop { background: rgba(0,0,0,.8); }
 .lb-cap { font-size: 14px; color: var(--ink-2); max-width: 70ch; margin: 0; }
 .lb-close { min-height: 44px; padding: 8px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
 @media print {
-  nav.toc, .filters, .theme-toggle { display: none; }
+  nav.toc, .filters, .theme-toggle, .lang-switch { display: none; }
   article.finding, .card { break-inside: avoid; box-shadow: none; }
   article.finding[hidden] { display: block; }
   .gallery { flex-wrap: wrap; overflow: visible; }
@@ -378,7 +378,7 @@ dialog.lb::backdrop { background: rgba(0,0,0,.8); }
   <div class="wrap">
     <div class="bar">
       <p class="brandline">gov.br · Homepage and the search journey to a service</p>
-      <button class="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
+      <span style="display:inline-flex;gap:8px;align-items:center"><a class="lang-switch" href="pt-br/" lang="pt-BR" hreflang="pt-BR" style="display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1px solid currentColor;border-radius:var(--btn-radius,999px);color:inherit;text-decoration:none;font-size:14px;font-weight:600" onclick="this.href=this.getAttribute('href').split('#')[0]+location.hash">Português</a><button class="theme-toggle" type="button" aria-pressed="false">Dark mode</button></span>
     </div>
     <div class="cover-grid">
       <div>
