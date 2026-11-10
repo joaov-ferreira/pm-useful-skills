@@ -2,6 +2,12 @@
 
 Work from a themed copy of `assets/report-template.html`. Every `{{…}}` is a slot to fill; every block under `<!-- EXAMPLE: replace -->` is one worked example of a component. Copy it as many times as needed, replace its content, and delete the comment. Leave CSS and script unchanged, except a scoped mockup `<style>` (see `mockups.md`).
 
+## Tabs
+
+The report opens as tabs: each `<section>` inside `<main>` is a panel and each link in `nav.toc` is its tab, matched by `href="#<section id>"`. The template's script shows one panel at a time, follows the URL hash (so `#findings` and links to anything inside a section, such as `#f03`, open the right tab), and adds previous/next links under each panel. Without JavaScript, and in print, every section shows in sequence.
+
+Keep it working when you fill the template: give every section an `id` with a matching `nav.toc` link, and when you remove a section (for example Performance when it was not measured) remove its link too.
+
 ## Voice
 
 - Address a product team. Short sentences, active voice, concrete numbers with units (`44&nbsp;px`, `2.4 screens`, `5.6&nbsp;s`).

@@ -134,6 +134,16 @@ nav.toc { background: var(--surface); border-bottom: 1px solid var(--line); posi
 nav.toc ul { display: flex; gap: 4px; overflow-x: auto; list-style: none; margin: 0; padding: 8px 0; scrollbar-width: thin; }
 nav.toc a { display: inline-block; white-space: nowrap; padding: 10px 12px; min-height: 44px; color: var(--ink); text-decoration: none; font-size: 15px; border-radius: var(--radius-sm); }
 nav.toc a:hover { background: var(--surface-2); }
+nav.toc a[aria-current] { color: var(--accent); font-weight: 600; box-shadow: inset 0 -3px 0 var(--accent); border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+/* Tabs: with JavaScript, one section shows at a time (the script sets .tabs on <html> and [hidden] on the others).
+   Without JavaScript, and in print, every section shows in sequence. */
+html.tabs main section { scroll-margin-top: 72px; min-height: 60vh; }
+html.tabs main section[hidden] { display: none; }
+.tab-pager { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 28px 0 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+.tab-pager a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 14px; border: 1px solid var(--line); border-radius: var(--btn-radius, var(--radius-sm)); background: var(--surface); color: var(--accent); text-decoration: none; font-weight: 600; font-size: 15px; }
+.tab-pager a:hover { background: var(--surface-2); }
+.tab-pager .next { margin-left: auto; }
+@media print { html.tabs main section[hidden] { display: block !important; } .tab-pager { display: none; } }
 
 /* ---------- layout ---------- */
 main section { padding: 44px 0 8px; }
@@ -698,6 +708,13 @@ dialog.lb::backdrop { background: rgba(0,0,0,.8); }
     </table>
   </div>
   <p class="muted small">Core Web Vitals: LCP ≤ 2.5&nbsp;s good, &gt; 4&nbsp;s poor · INP ≤ 200&nbsp;ms good · CLS ≤ 0.1 good. Nielsen's Law: bandwidth grows slower than page weight, so lean pages stay a design requirement.</p>
+  <ul class="plain muted small" id="perf-terms">
+    <li><strong>TTFB</strong> (Time to First Byte): how long the server takes to start answering.</li>
+    <li><strong>FCP</strong> (First Contentful Paint): when the first text or image appears on screen.</li>
+    <li><strong>LCP</strong> (Largest Contentful Paint): when the largest visible text block or image has appeared, the usual measure of "the page looks loaded".</li>
+    <li><strong>CLS</strong> (Cumulative Layout Shift): how much the content jumps around while loading; it is a score with no unit, and lower is better.</li>
+    <li><strong>INP</strong> (Interaction to Next Paint): how long the page takes to respond visibly to a tap, click or key press.</li>
+  </ul>
 </section>
 
 <!-- ============================ STRENGTHS ============================ -->
@@ -790,6 +807,37 @@ dialog.lb::backdrop { background: rgba(0,0,0,.8); }
     var t = document.querySelector(a.getAttribute('href'));
     if (t && t.closest('article.finding[hidden]') && buttons[0]) buttons[0].click();
   });
+  // Tabs: each <section> in <main> is a panel and each nav.toc link is its tab.
+  // The URL hash picks the panel, so links to a section or to anything inside one (#f03) keep working.
+  var panels = Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
+  var tabLinks = Array.prototype.slice.call(document.querySelectorAll('nav.toc a[href^="#"]'));
+  var tocNav = document.querySelector('nav.toc');
+  if (panels.length > 1 && tabLinks.length) {
+    document.documentElement.classList.add('tabs');
+    var titleOf = function (id) { for (var i = 0; i < tabLinks.length; i++) if (tabLinks[i].getAttribute('href') === '#' + id) return tabLinks[i].textContent; return id; };
+    panels.forEach(function (p, i) {
+      var pager = document.createElement('nav'); pager.className = 'tab-pager'; pager.setAttribute('aria-label', 'Previous and next section');
+      var prev = panels[i - 1], next = panels[i + 1];
+      if (prev) { var a = document.createElement('a'); a.href = '#' + prev.id; a.textContent = '\u2190 ' + titleOf(prev.id); pager.appendChild(a); }
+      if (next) { var b = document.createElement('a'); b.href = '#' + next.id; b.className = 'next'; b.textContent = titleOf(next.id) + ' \u2192'; pager.appendChild(b); }
+      p.appendChild(pager);
+    });
+    var route = function (initial) {
+      var id = ''; try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) {}
+      var target = id ? document.getElementById(id) : null;
+      var panel = target && target.closest ? target.closest('main section[id]') : null;
+      if (!panel) { panel = panels[0]; target = null; }
+      panels.forEach(function (p) { p.hidden = p !== panel; });
+      tabLinks.forEach(function (a) {
+        if (a.getAttribute('href') === '#' + panel.id) { a.setAttribute('aria-current', 'true'); if (a.scrollIntoView && !initial) a.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+        else a.removeAttribute('aria-current');
+      });
+      if (target && target !== panel) target.scrollIntoView();
+      else if (!initial && tocNav) { window.scrollTo(0, tocNav.getBoundingClientRect().top + window.pageYOffset); }
+    };
+    window.addEventListener('hashchange', function () { route(false); });
+    route(true);
+  }
   // Lightbox
   var lb = document.getElementById('lightbox');
   var lbImg = lb.querySelector('img'), lbCap = lb.querySelector('.lb-cap');
